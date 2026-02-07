@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Спасибо! - TechStore</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- ВСТАВЬТЕ КОДЫ СЧЕТЧИКОВ ЗДЕСЬ (как в index.html) -->
+    
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="catalog.html">Каталог</a></li>
+                <li><a href="index.html#contact">Контакты</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="thank-you-message">
+            <h1>Спасибо за заказ!</h1>
+            <p>Ваша заявка успешно отправлена. Наш менеджер свяжется с вами в ближайшее время.</p>
+            <p>Номер вашей заявки: <strong>#<?php echo rand(1000, 9999); ?></strong></p>
+            
+            <!-- Имитация данных покупки для e-commerce -->
+            <script>
+                // Отправляем событие покупки в аналитику
+                setTimeout(function() {
+                    ym(XXXXXX, 'reachGoal', 'Purchase');
+                    gtag('event', 'purchase', {
+                        transaction_id: 'ORDER_' + Date.now(),
+                        value: 29999,
+                        currency: 'RUB',
+                        items: [{
+                            item_name: 'Смартфон Pro Max',
+                            price: 29999,
+                            quantity: 1
+                        }]
+                    });
+                }, 500);
+            </script>
+            
+            <a href="index.html" class="btn">Вернуться на главную</a>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2024 TechStore. Тестовый сайт для учебного задания.</p>
+    </footer>
+</body>
+</html>

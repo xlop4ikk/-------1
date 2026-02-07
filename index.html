@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStore - Магазин электроники</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- 
+    ==============================================
+    ВСТАВЬТЕ КОД СЧЕТЧИКОВ ЯНДЕКС.МЕТРИКИ И GOOGLE ANALYTICS 4 ЗДЕСЬ
+    (после тега <link rel="stylesheet"> и перед закрывающим </head>)
+    
+    1. Код Яндекс.Метрики (замените XXXXXX на ваш номер счетчика):
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+    
+        ym(XXXXXX, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true,
+            webvisor:true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/XXXXXX" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    
+    2. Код Google Analytics 4 (замените G-XXXXXXXXXX на ваш ID):
+    Google tag (gtag.js)
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+    </script>
+    ==============================================
+    -->
+    
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="catalog.html">Каталог</a></li>
+                <li><a href="#contact" id="contact-link">Контакты</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>TechStore - Магазин современной электроники</h1>
+            <p>Лучшие гаджеты по доступным ценам</p>
+            <a href="catalog.html" class="btn">Смотреть каталог</a>
+        </section>
+
+        <section class="products">
+            <div class="product-card">
+                <img src="https://via.placeholder.com/300x200/3498db/ffffff?text=Смартфон" alt="Смартфон">
+                <h3>Смартфон Pro Max</h3>
+                <p>Мощный смартфон с лучшей камерой</p>
+                <div class="price">29 999 ₽</div>
+                <button class="btn btn-buy" onclick="ym(XXXXXX, 'reachGoal', 'AddToCart'); gtag('event', 'add_to_cart', {items: [{item_name: 'Смартфон Pro Max'}]});">В корзину</button>
+            </div>
+
+            <div class="product-card">
+                <img src="https://via.placeholder.com/300x200/e74c3c/ffffff?text=Ноутбук" alt="Ноутбук">
+                <h3>Ноутбук UltraBook</h3>
+                <p>Легкий и производительный ноутбук</p>
+                <div class="price">54 999 ₽</div>
+                <button class="btn btn-buy" onclick="ym(XXXXXX, 'reachGoal', 'AddToCart'); gtag('event', 'add_to_cart', {items: [{item_name: 'Ноутбук UltraBook'}]});">В корзину</button>
+            </div>
+
+            <div class="product-card">
+                <img src="https://via.placeholder.com/300x200/2ecc71/ffffff?text=Наушники" alt="Наушники">
+                <h3>Беспроводные наушники</h3>
+                <p>Качественный звук и шумоподавление</p>
+                <div class="price">8 999 ₽</div>
+                <button class="btn btn-buy" onclick="ym(XXXXXX, 'reachGoal', 'AddToCart'); gtag('event', 'add_to_cart', {items: [{item_name: 'Беспроводные наушники'}]});">В корзину</button>
+            </div>
+        </section>
+
+        <section id="contact" class="contact-info">
+            <h2>Контакты</h2>
+            <p>Есть вопросы? Свяжитесь с нами:</p>
+            <p>Телефон: <a href="tel:+79991234567" onclick="ym(XXXXXX, 'reachGoal', 'PhoneClick'); gtag('event', 'phone_click');">+7 (999) 123-45-67</a></p>
+            <p>Email: <a href="mailto:info@techstore.ru" onclick="ym(XXXXXX, 'reachGoal', 'EmailClick'); gtag('event', 'email_click');">info@techstore.ru</a></p>
+        </section>
+
+        <section>
+            <h2>Заказать обратный звонок</h2>
+            <form id="callback-form" onsubmit="ym(XXXXXX, 'reachGoal', 'FormSubmit'); gtag('event', 'form_submit'); setTimeout(function() { window.location.href = 'thank-you.html'; }, 1000); return false;">
+                <div class="form-group">
+                    <label for="name">Имя:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Телефон:</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Сообщение:</label>
+                    <textarea id="message" name="message"></textarea>
+                </div>
+                <button type="submit" class="btn">Заказать звонок</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2024 TechStore. Тестовый сайт для учебного задания.</p>
+    </footer>
+
+    <script>
+        // Плавная прокрутка для ссылки "Контакты"
+        document.getElementById('contact-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('contact').scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    </script>
+</body>
+</html>

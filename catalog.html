@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог - TechStore</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- ВСТАВЬТЕ КОДЫ СЧЕТЧИКОВ ЗДЕСЬ (как в index.html) -->
+    
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="catalog.html">Каталог</a></li>
+                <li><a href="index.html#contact">Контакты</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Каталог товаров</h1>
+        
+        <div class="cart-summary">
+            <h3>Ваша корзина</h3>
+            <ul id="cart-items">
+                <!-- Товары будут добавляться сюда -->
+            </ul>
+            <p id="cart-total">Итого: 0 ₽</p>
+            <button class="btn btn-buy" onclick="ym(XXXXXX, 'reachGoal', 'Checkout'); gtag('event', 'begin_checkout');">Оформить заказ</button>
+        </div>
+
+        <div class="products">
+            <div class="product-card">
+                <img src="https://via.placeholder.com/300x200/9b59b6/ffffff?text=Планшет" alt="Планшет">
+                <h3>Планшет Tab Pro</h3>
+                <p>Идеален для работы и развлечений</p>
+                <div class="price">24 999 ₽</div>
+                <button class="btn btn-buy" onclick="addToCart('Планшет Tab Pro', 24999)">В корзину</button>
+            </div>
+
+            <div class="product-card">
+                <img src="https://via.placeholder.com/300x200/1abc9c/ffffff?text=Смарт-часы" alt="Смарт-часы">
+                <h3>Смарт-часы Watch 3</h3>
+                <p>Мониторинг здоровья и уведомления</p>
+                <div class="price">12 999 ₽</div>
+                <button class="btn btn-buy" onclick="addToCart('Смарт-часы Watch 3', 12999)">В корзину</button>
+            </div>
+
+            <div class="product-card">
+                <img src="https://via.placeholder.com/300x200/e67e22/ffffff?text=Колонка" alt="Колонка">
+                <h3>Bluetooth колонка</h3>
+                <p>Мощный звук и долгий аккумулятор</p>
+                <div class="price">5 999 ₽</div>
+                <button class="btn btn-buy" onclick="addToCart('Bluetooth колонка', 5999)">В корзину</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2024 TechStore. Тестовый сайт для учебного задания.</p>
+    </footer>
+
+    <script>
+        let cart = [];
+        let total = 0;
+
+        function addToCart(productName, price) {
+            // Добавляем товар в корзину
+            cart.push({name: productName, price: price});
+            total += price;
+            
+            // Обновляем отображение корзины
+            updateCartDisplay();
+            
+            // Отправляем события в аналитику
+            ym(XXXXXX, 'reachGoal', 'AddToCart');
+            gtag('event', 'add_to_cart', {
+                items: [{
+                    item_name: productName,
+                    price: price,
+                    currency: 'RUB'
+                }]
+            });
+            
+            alert('Товар "' + productName + '" добавлен в корзину!');
+        }
+
+        function updateCartDisplay() {
+            const cartItems = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+            
+            // Очищаем список
+            cartItems.innerHTML = '';
+            
+            // Добавляем товары
+            cart.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = `${item.name} - ${item.price} ₽`;
+                cartItems.appendChild(li);
+            });
+            
+            // Обновляем итоговую сумму
+            cartTotal.textContent = `Итого: ${total} ₽`;
+        }
+    </script>
+</body>
+</html>
