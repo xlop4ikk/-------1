@@ -29,7 +29,7 @@
                 <!-- Товары будут добавляться сюда -->
             </ul>
             <p id="cart-total">Итого: 0 ₽</p>
-            <button class="btn btn-buy" onclick="ym(XXXXXX, 'reachGoal', 'Checkout'); gtag('event', 'begin_checkout');">Оформить заказ</button>
+            <button class="btn btn-buy" onclick="ym(106701813, 'reachGoal', 'Checkout'); gtag('event', 'begin_checkout');">Оформить заказ</button>
         </div>
 
         <div class="products">
@@ -76,7 +76,7 @@
             updateCartDisplay();
             
             // Отправляем события в аналитику
-            ym(XXXXXX, 'reachGoal', 'AddToCart');
+            ym(106701813, 'reachGoal', 'AddToCart');
             gtag('event', 'add_to_cart', {
                 items: [{
                     item_name: productName,
