@@ -6,7 +6,24 @@
     <title>Каталог - TechStore</title>
     <link rel="stylesheet" href="style.css">
     
-    <!-- ВСТАВЬТЕ КОДЫ СЧЕТЧИКОВ ЗДЕСЬ (как в index.html) -->
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){
+            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=106701813', 'ym');
+
+        ym(106701813, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/106701813" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+    
+    <!-- Шаг 1: Просмотр товара/каталога - фиксируется при загрузке страницы -->
+    <script>
+        ym(106701813, 'reachGoal', 'ViewProduct');
+    </script>
     
 </head>
 <body>
@@ -16,6 +33,7 @@
                 <li><a href="index.html">Главная</a></li>
                 <li><a href="catalog.html">Каталог</a></li>
                 <li><a href="index.html#contact">Контакты</a></li>
+                <li><a href="cart.html" class="cart-link">Корзина (<span id="cart-count">0</span>)</a></li>
             </ul>
         </nav>
     </header>
@@ -23,22 +41,15 @@
     <main>
         <h1>Каталог товаров</h1>
         
-        <div class="cart-summary">
-            <h3>Ваша корзина</h3>
-            <ul id="cart-items">
-                <!-- Товары будут добавляться сюда -->
-            </ul>
-            <p id="cart-total">Итого: 0 ₽</p>
-            <button class="btn btn-buy" onclick="ym(106701813, 'reachGoal', 'Checkout'); gtag('event', 'begin_checkout');">Оформить заказ</button>
-        </div>
-
+        <!-- Шаг 1: Просмотр каталога товаров -->
+        
         <div class="products">
             <div class="product-card">
                 <img src="https://via.placeholder.com/300x200/9b59b6/ffffff?text=Планшет" alt="Планшет">
                 <h3>Планшет Tab Pro</h3>
                 <p>Идеален для работы и развлечений</p>
                 <div class="price">24 999 ₽</div>
-                <button class="btn btn-buy" onclick="addToCart('Планшет Tab Pro', 24999)">В корзину</button>
+                <button class="btn btn-buy" onclick="addToCart('Планшет Tab Pro', 24999, 'https://via.placeholder.com/300x200/9b59b6/ffffff?text=Планшет');">В корзину</button>
             </div>
 
             <div class="product-card">
@@ -46,7 +57,7 @@
                 <h3>Смарт-часы Watch 3</h3>
                 <p>Мониторинг здоровья и уведомления</p>
                 <div class="price">12 999 ₽</div>
-                <button class="btn btn-buy" onclick="addToCart('Смарт-часы Watch 3', 12999)">В корзину</button>
+                <button class="btn btn-buy" onclick="addToCart('Смарт-часы Watch 3', 12999, 'https://via.placeholder.com/300x200/1abc9c/ffffff?text=Смарт-часы');">В корзину</button>
             </div>
 
             <div class="product-card">
@@ -54,7 +65,7 @@
                 <h3>Bluetooth колонка</h3>
                 <p>Мощный звук и долгий аккумулятор</p>
                 <div class="price">5 999 ₽</div>
-                <button class="btn btn-buy" onclick="addToCart('Bluetooth колонка', 5999)">В корзину</button>
+                <button class="btn btn-buy" onclick="addToCart('Bluetooth колонка', 5999, 'https://via.placeholder.com/300x200/e67e22/ffffff?text=Колонка');">В корзину</button>
             </div>
         </div>
     </main>
@@ -64,47 +75,60 @@
     </footer>
 
     <script>
-        let cart = [];
-        let total = 0;
-
-        function addToCart(productName, price) {
-            // Добавляем товар в корзину
-            cart.push({name: productName, price: price});
-            total += price;
+        // === ФУНКЦИОНАЛ КОРЗИНЫ И ЯНДЕКС МЕТРИКА ===
+        
+        // Получаем корзину из localStorage
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        
+        // Обновление счётчика корзины
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cart-count').textContent = count;
+        }
+        
+        // Добавление в корзину (Шаг 2 воронки)
+        function addToCart(name, price, image) {
+            // Ищем товар в корзине
+            const existingItem = cart.find(item => item.name === name);
             
-            // Обновляем отображение корзины
-            updateCartDisplay();
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ name, price, image, quantity: 1 });
+            }
             
-            // Отправляем события в аналитику
-            ym(106701813, 'reachGoal', 'AddToCart');
-            gtag('event', 'add_to_cart', {
-                items: [{
-                    item_name: productName,
-                    price: price,
-                    currency: 'RUB'
-                }]
+            // Сохраняем в localStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            // Обновляем счётчик
+            updateCartCount();
+            
+            // === ШАГ 2: Добавление в корзину ===
+            ym(106701813, 'reachGoal', 'AddToCart', {
+                item_name: name,
+                price: price,
+                quantity: cart.find(item => item.name === name).quantity
             });
             
-            alert('Товар "' + productName + '" добавлен в корзину!');
-        }
-
-        function updateCartDisplay() {
-            const cartItems = document.getElementById('cart-items');
-            const cartTotal = document.getElementById('cart-total');
-            
-            // Очищаем список
-            cartItems.innerHTML = '';
-            
-            // Добавляем товары
-            cart.forEach(item => {
-                const li = document.createElement('li');
-                li.textContent = `${item.name} - ${item.price} ₽`;
-                cartItems.appendChild(li);
+            // E-commerce dataLayer для Яндекс Метрики
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': 'add_to_cart',
+                'ecommerce': {
+                    'items': [{
+                        'item_name': name,
+                        'price': price,
+                        'quantity': 1
+                    }]
+                }
             });
             
-            // Обновляем итоговую сумму
-            cartTotal.textContent = `Итого: ${total} ₽`;
+            // Визуальное подтверждение
+            alert(name + ' добавлен в корзину!');
         }
+        
+        // Инициализация счётчика при загрузке
+        updateCartCount();
     </script>
 </body>
 </html>

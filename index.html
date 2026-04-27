@@ -28,6 +28,7 @@
                 <li><a href="index.html">Главная</a></li>
                 <li><a href="catalog.html">Каталог</a></li>
                 <li><a href="#contact" id="contact-link">Контакты</a></li>
+                <li><a href="cart.html" class="cart-link">Корзина (<span id="cart-count">0</span>)</a></li>
             </ul>
         </nav>
     </header>
@@ -45,7 +46,7 @@
                 <h3>Смартфон Pro Max</h3>
                 <p>Мощный смартфон с лучшей камерой</p>
                 <div class="price">29 999 ₽</div>
-                <button class="btn btn-buy" onclick="ym(106701813, 'reachGoal', 'AddToCart'); gtag('event', 'add_to_cart', {items: [{item_name: 'Смартфон Pro Max'}]});">В корзину</button>
+                <button class="btn btn-buy" onclick="addToCart('Смартфон Pro Max', 29999, 'https://via.placeholder.com/300x200/3498db/ffffff?text=Смартфон');">В корзину</button>
             </div>
 
             <div class="product-card">
@@ -53,7 +54,7 @@
                 <h3>Ноутбук UltraBook</h3>
                 <p>Легкий и производительный ноутбук</p>
                 <div class="price">54 999 ₽</div>
-                <button class="btn btn-buy" onclick="ym(106701813, 'reachGoal', 'AddToCart'); gtag('event', 'add_to_cart', {items: [{item_name: 'Ноутбук UltraBook'}]});">В корзину</button>
+                <button class="btn btn-buy" onclick="addToCart('Ноутбук UltraBook', 54999, 'https://via.placeholder.com/300x200/e74c3c/ffffff?text=Ноутбук');">В корзину</button>
             </div>
 
             <div class="product-card">
@@ -61,7 +62,7 @@
                 <h3>Беспроводные наушники</h3>
                 <p>Качественный звук и шумоподавление</p>
                 <div class="price">8 999 ₽</div>
-                <button class="btn btn-buy" onclick="ym(106701813, 'reachGoal', 'AddToCart'); gtag('event', 'add_to_cart', {items: [{item_name: 'Беспроводные наушники'}]});">В корзину</button>
+                <button class="btn btn-buy" onclick="addToCart('Беспроводные наушники', 8999, 'https://via.placeholder.com/300x200/2ecc71/ffffff?text=Наушники');">В корзину</button>
             </div>
         </section>
 
@@ -104,6 +105,61 @@
                 behavior: 'smooth'
             });
         });
+        
+        // === ФУНКЦИОНАЛ КОРЗИНЫ И ЯНДЕКС МЕТРИКА ===
+        
+        // Получаем корзину из localStorage
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        
+        // Обновление счётчика корзины
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cart-count').textContent = count;
+        }
+        
+        // Добавление в корзину (Шаг 2 воронки)
+        function addToCart(name, price, image) {
+            // Ищем товар в корзине
+            const existingItem = cart.find(item => item.name === name);
+            
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ name, price, image, quantity: 1 });
+            }
+            
+            // Сохраняем в localStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            // Обновляем счётчик
+            updateCartCount();
+            
+            // === ШАГ 2: Добавление в корзину ===
+            ym(106701813, 'reachGoal', 'AddToCart', {
+                item_name: name,
+                price: price,
+                quantity: cart.find(item => item.name === name).quantity
+            });
+            
+            // E-commerce dataLayer для Яндекс Метрики
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': 'add_to_cart',
+                'ecommerce': {
+                    'items': [{
+                        'item_name': name,
+                        'price': price,
+                        'quantity': 1
+                    }]
+                }
+            });
+            
+            // Визуальное подтверждение
+            alert(name + ' добавлен в корзину!');
+        }
+        
+        // Инициализация счётчика при загрузке
+        updateCartCount();
     </script>
 </body>
 </html>

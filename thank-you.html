@@ -6,7 +6,19 @@
     <title>Спасибо! - TechStore</title>
     <link rel="stylesheet" href="style.css">
     
-    <!-- ВСТАВЬТЕ КОДЫ СЧЕТЧИКОВ ЗДЕСЬ (как в index.html) -->
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){
+            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=106701813', 'ym');
+
+        ym(106701813, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/106701813" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
     
 </head>
 <body>
@@ -24,22 +36,74 @@
         <div class="thank-you-message">
             <h1>Спасибо за заказ!</h1>
             <p>Ваша заявка успешно отправлена. Наш менеджер свяжется с вами в ближайшее время.</p>
-            <p>Номер вашей заявки: <strong>#<?php echo rand(1000, 9999); ?></strong></p>
+            <p>Номер вашей заявки: <strong id="order-number">#____</strong></p>
             
-            <!-- Имитация данных покупки для e-commerce -->
+            <div id="order-details" class="order-details">
+                <!-- Данные заказа будут добавлены через JS -->
+            </div>
+            
+            <!-- Шаг 5: Покупка - фиксация завершения воронки -->
             <script>
-                // Отправляем событие покупки в аналитику
+                // Получаем данные заказа из localStorage
+                const orderData = JSON.parse(localStorage.getItem('orderData')) || null;
+                
+                // Генерируем номер заказа
+                const orderNumber = 'ORDER_' + Date.now();
+                document.getElementById('order-number').textContent = '#' + orderNumber;
+                
+                // Отображаем детали заказа
+                if (orderData) {
+                    let itemsHtml = '';
+                    let total = 0;
+                    
+                    orderData.items.forEach(item => {
+                        const itemTotal = item.price * item.quantity;
+                        total += itemTotal;
+                        itemsHtml += `<li>${item.name} × ${item.quantity} = ${itemTotal.toLocaleString()} ₽</li>`;
+                    });
+                    
+                    document.getElementById('order-details').innerHTML = `
+                        <h3>Детали заказа</h3>
+                        <p><strong>Имя:</strong> ${orderData.formData.name}</p>
+                        <p><strong>Телефон:</strong> ${orderData.formData.phone}</p>
+                        <p><strong>Email:</strong> ${orderData.formData.email}</p>
+                        <h4>Товары:</h4>
+                        <ul>${itemsHtml}</ul>
+                        <p class="order-total"><strong>Итого: ${total.toLocaleString()} ₽</strong></p>
+                    `;
+                    
+                    // Очищаем данные заказа
+                    localStorage.removeItem('orderData');
+                }
+                
+                // Отправляем событие покупки в Яндекс Метрику (Шаг 5)
                 setTimeout(function() {
-                    ym(106701813, 'reachGoal', 'Purchase');
-                    gtag('event', 'purchase', {
-                        transaction_id: 'ORDER_' + Date.now(),
-                        value: 29999,
+                    const items = orderData ? orderData.items.map(item => ({
+                        item_name: item.name,
+                        price: item.price,
+                        quantity: item.quantity
+                    })) : [];
+                    
+                    const total = orderData ? orderData.total : 0;
+                    
+                    // === ШАГ 5: Покупка ===
+                    ym(106701813, 'reachGoal', 'Purchase', {
+                        transaction_id: orderNumber,
+                        value: total,
                         currency: 'RUB',
-                        items: [{
-                            item_name: 'Смартфон Pro Max',
-                            price: 29999,
-                            quantity: 1
-                        }]
+                        items: items
+                    });
+                    
+                    // E-commerce dataLayer
+                    window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push({
+                        'event': 'purchase',
+                        'ecommerce': {
+                            'transaction_id': orderNumber,
+                            'value': total,
+                            'currency': 'RUB',
+                            'items': items
+                        }
                     });
                 }, 500);
             </script>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корзина - TechStore</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){
+            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=106701813', 'ym');
+
+        ym(106701813, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/106701813" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+    
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="catalog.html">Каталог</a></li>
+                <li><a href="index.html#contact">Контакты</a></li>
+                <li><a href="cart.html" class="cart-link">Корзина (<span id="cart-count">0</span>)</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="cart-page">
+            <h1>Корзина</h1>
+            
+            <!-- Шаг 3: Переход в корзину - фиксируется при загрузке страницы -->
+            <script>
+                // Фиксируем посещение корзины
+                ym(106701813, 'reachGoal', 'ViewCart');
+            </script>
+            
+            <div id="cart-items" class="cart-items">
+                <!-- Товары будут добавлены через JS -->
+            </div>
+            
+            <div id="cart-empty" class="cart-empty" style="display: none;">
+                <p>Ваша корзина пуста</p>
+                <a href="catalog.html" class="btn">Перейти в каталог</a>
+            </div>
+            
+            <div id="cart-summary" class="cart-summary">
+                <div class="cart-total">
+                    <span>Итого:</span>
+                    <span id="cart-total-amount">0 ₽</span>
+                </div>
+                
+                <!-- Шаг 4: Оформление заказа -->
+                <form id="checkout-form" class="checkout-form" onsubmit="handleCheckout(event)">
+                    <h2>Оформление заказа</h2>
+                    <div class="form-group">
+                        <label for="checkout-name">Имя:</label>
+                        <input type="text" id="checkout-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="checkout-phone">Телефон:</label>
+                        <input type="tel" id="checkout-phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="checkout-email">Email:</label>
+                        <input type="email" id="checkout-email" name="email" required>
+                    </div>
+                    <button type="submit" class="btn btn-checkout">Оформить заказ</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2024 TechStore. Тестовый сайт для учебного задания.</p>
+    </footer>
+
+    <script>
+        // Данные корзины
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        
+        // Обновление счётчика корзины
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cart-count').textContent = count;
+        }
+        
+        // Отрисовка корзины
+        function renderCart() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartEmpty = document.getElementById('cart-empty');
+            const cartSummary = document.getElementById('cart-summary');
+            
+            if (cart.length === 0) {
+                cartItemsContainer.style.display = 'none';
+                cartSummary.style.display = 'none';
+                cartEmpty.style.display = 'block';
+                return;
+            }
+            
+            cartEmpty.style.display = 'none';
+            cartItemsContainer.style.display = 'block';
+            cartSummary.style.display = 'block';
+            
+            let html = '';
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                html += `
+                    <div class="cart-item">
+                        <img src="${item.image}" alt="${item.name}">
+                        <div class="cart-item-info">
+                            <h3>${item.name}</h3>
+                            <p class="cart-item-price">${item.price.toLocaleString()} ₽</p>
+                        </div>
+                        <div class="cart-item-quantity">
+                            <button onclick="changeQuantity(${index}, -1)">-</button>
+                            <span>${item.quantity}</span>
+                            <button onclick="changeQuantity(${index}, 1)">+</button>
+                        </div>
+                        <div class="cart-item-total">${itemTotal.toLocaleString()} ₽</div>
+                        <button class="cart-item-remove" onclick="removeItem(${index})">✕</button>
+                    </div>
+                `;
+            });
+            
+            cartItemsContainer.innerHTML = html;
+            document.getElementById('cart-total-amount').textContent = total.toLocaleString() + ' ₽';
+        }
+        
+        // Изменение количества
+        function changeQuantity(index, delta) {
+            cart[index].quantity += delta;
+            if (cart[index].quantity <= 0) {
+                cart.splice(index, 1);
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
+            updateCartCount();
+        }
+        
+        // Удаление товара
+        function removeItem(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
+            updateCartCount();
+        }
+        
+        // Оформление заказа (Шаг 4 → Шаг 5)
+        function handleCheckout(event) {
+            event.preventDefault();
+            
+            // Шаг 4: Фиксируем оформление заказа
+            ym(106701813, 'reachGoal', 'Checkout');
+            
+            // Получаем данные формы
+            const formData = {
+                name: document.getElementById('checkout-name').value,
+                phone: document.getElementById('checkout-phone').value,
+                email: document.getElementById('checkout-email').value
+            };
+            
+            // Сохраняем заказ в localStorage для передачи на thank-you.html
+            localStorage.setItem('orderData', JSON.stringify({
+                formData: formData,
+                items: cart,
+                total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
+            }));
+            
+            // Очищаем корзину
+            localStorage.removeItem('cart');
+            
+            // Переход на страницу благодарности (Шаг 5)
+            window.location.href = 'thank-you.html';
+        }
+        
+        // Инициализация
+        renderCart();
+        updateCartCount();
+    </script>
+</body>
+</html>
